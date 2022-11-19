@@ -19,6 +19,7 @@ const validateBody = (parm) => {
 
 const validateLogin = async ({ email, password }) => {
     const user = await User.findOne({ where: { email } });
+    console.log(user);
     
     if (!user || user.password !== password) {
         const error = new Error();
