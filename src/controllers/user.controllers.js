@@ -16,13 +16,13 @@ const getAll = async (_req, res) => {
 };
 
 const getId = async (req, res) => {
-   const { id } = req.params;
-    const userId = await UserService.getId(id);
-    if (!userId) {
-        return res.status(404).json({ message: 'User does not exist' });
-    }
-    res.status(200).json(userId);
-};
+    const { id } = req.params;
+     const userId = await UserService.getId(id);
+     if (!userId) {
+         return res.status(404).json({ message: 'User does not exist' });
+     }
+     res.status(200).json(userId);
+ };
 
 module.exports = {
     create,

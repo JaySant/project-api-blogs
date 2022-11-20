@@ -18,6 +18,31 @@ const validateBody = (parm) => {
     return value;
 };
 
+const isValidated = async (email) => {
+    const userEmail = User.findOne({ where: { email } });
+  return userEmail;
+};
+
+const create = async ({ displayName, email, password, image }) => {
+    const userCreate = await User.create({ displayName, email, password, image });
+
+    const { password: _, ...userWithoutPassword } = userCreate.dataValues;
+    const token = jwtUtil.createToken(userWithoutPassword);
+    return token;
+};
+
+const validateToken = (token) => {
+    if (!token) {
+        const e = new Error('Token obrigatório!');
+        e.status = 401;
+        throw e;
+    }
+
+    const user = jwtUtil.validateToken(token);
+
+    return user;
+};
+
 const getAll = async () => {
     const user = await User.findAll({
         attributes: { exclude: ['password'] },
@@ -32,22 +57,10 @@ const getId = async (id) => {
     return userId;
 };
 
-const isValidated = async (email) => {
-    const userEmail = User.findOne({ where: { email } });
-  return userEmail;
-};
-
-const create = async ({ displayName, email, password, image }) => {
-    const userCreate = await User.create({ displayName, email, password, image });
-
-    const { password: _, ...userWithoutPassword } = userCreate.dataValues;
-    const token = jwtUtil.createToken(userWithoutPassword);
-    return token;
-};
-
 module.exports = {
     validateBody,
     isValidated,
+    validateToken,
     create,
     getAll,
     getId,
