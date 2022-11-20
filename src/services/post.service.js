@@ -18,4 +18,26 @@ const postAll = async () => {
     return posts;
 };
 
-module.exports = { postAll };
+const postId = async (id) => {
+    const postsId = await BlogPost.findByPk(id, {
+        include: [
+            {
+                model: User,
+                as: 'user',
+                attributes: { exclude: ['password'] },
+            },
+            {
+                model: Category,
+                as: 'categories',
+                through: { attributes: [] },
+            },
+        ],
+    });
+    return postsId;
+};
+
+module.exports = { 
+    postAll,
+    postId,
+
+};
