@@ -18,6 +18,20 @@ const validateBody = (parm) => {
     return value;
 };
 
+const getAll = async () => {
+    const user = await User.findAll({
+        attributes: { exclude: ['password'] },
+    });
+    return user;
+};
+
+const getId = async (id) => {
+    const userId = await User.findByPk(id, {
+        attributes: { exclude: ['password'] },
+    });
+    return userId;
+};
+
 const isValidated = async (email) => {
     const userEmail = User.findOne({ where: { email } });
   return userEmail;
@@ -35,4 +49,6 @@ module.exports = {
     validateBody,
     isValidated,
     create,
+    getAll,
+    getId,
 };
