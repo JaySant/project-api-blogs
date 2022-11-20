@@ -5,6 +5,9 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
         },
         name: DataTypes.STRING
+    }, {
+        underscored: true,
+        timestamps: false,
     });
     return Category
 }
