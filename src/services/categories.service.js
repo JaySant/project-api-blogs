@@ -19,7 +19,13 @@ const newCategory = async ({ name }) => {
     return nameCategory;
 };
 
+const categoryAll = async () => {
+    const categories = await Category.findAll();
+    return categories;
+};
+
 module.exports = {
     newCategory,
     validateBody,
+    categoryAll,
 };
