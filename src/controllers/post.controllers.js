@@ -21,6 +21,22 @@ const getPostId = async (req, res) => {
     return res.status(204).end();
  };
 
+ const updatePost = async (req, res) => {
+    const { title, content } = req.body;
+    const id = Number(req.params.id);
+    const { user } = req;
+    if (!title || !content) {
+        return res.status(400).json({ message: 'Some required fields are missing' });
+    }
+
+    if (id !== user.id) {
+        return res.status(401).json({ message: 'Unauthorized user' });
+    }
+
+    const result = await PostService.updatePost(id, title, content);
+    return res.status(200).json(result);
+ };
+
  const createPost = async (req, res) => {
     const { title, content, categoryIds } = req.body;
     const { id } = req.user;
@@ -36,4 +52,5 @@ module.exports = {
     getPostId,
     removePost,
     createPost,
+    updatePost,
 };

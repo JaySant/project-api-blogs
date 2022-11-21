@@ -59,11 +59,14 @@ const createPost = async (id, title, content, categoryIds) => {
     return dataValues;
 };
 
+const updatePost = async (id, title, content) => {
+  await BlogPost.update({ title, content }, { where: { id } });
+  const get = await getPostId(id);
+  return get;
+};
+
 const removePost = async (id, user) => {
-    // const { dataValues: { userId } } = await getPostId(id);
     const data = await getPostId(id);
-    console.log('id do userId', data);
-    console.log('id do user', user.id);
 
     if (data === null) {
         const error = new Error('Post does not exist');
@@ -87,4 +90,5 @@ module.exports = {
     getPostId,
     removePost,
     createPost,
+    updatePost,
 };
