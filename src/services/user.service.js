@@ -57,6 +57,10 @@ const getId = async (id) => {
     return userId;
 };
 
+const deleteUser = async (user) => {
+    await User.destroy({ where: { id: user.id } });
+};
+
 module.exports = {
     validateBody,
     isValidated,
@@ -64,4 +68,5 @@ module.exports = {
     create,
     getAll,
     getId,
+    deleteUser,
 };
