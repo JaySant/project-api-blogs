@@ -1,4 +1,4 @@
-const { BlogPost, User, Category } = require('../models');
+const { BlogPost, User, Category, PostCategory } = require('../models');
 
 const postAll = async () => {
     const posts = await BlogPost.findAll({
@@ -18,8 +18,9 @@ const postAll = async () => {
     return posts;
 };
 
-const postId = async (id) => {
-    const postsId = await BlogPost.findByPk(id, {
+const getPostId = async (id) => {
+    const postsId = await BlogPost.findOne(
+        { where: { id },
         include: [
             {
                 model: User,
@@ -32,12 +33,58 @@ const postId = async (id) => {
                 through: { attributes: [] },
             },
         ],
-    });
+    },
+    );
+
     return postsId;
+};
+
+const createPost = async (id, title, content, categoryIds) => {
+   const { count } = await Category.findAndCountAll({ where: { id: categoryIds } });
+ if (categoryIds.length !== count) {
+    const error = new Error('one or more "categoryIds" not found');
+    error.status = 400;
+    throw error;
+}  
+  const { dataValues } = await BlogPost.create({ 
+    userId: Number(id), title, content, categoryIds, published: new Date(), updated: new Date() });
+    console.log(dataValues);
+
+    const categories = categoryIds.map((category) => ({
+        postId: dataValues.id,
+        categoryId: category,
+    }));
+
+    await PostCategory.bulkCreate(categories);
+    return dataValues;
+};
+
+const removePost = async (id, user) => {
+    // const { dataValues: { userId } } = await getPostId(id);
+    const data = await getPostId(id);
+    console.log('id do userId', data);
+    console.log('id do user', user.id);
+
+    if (data === null) {
+        const error = new Error('Post does not exist');
+        error.status = 404;
+        throw error;
+    }
+
+    if (data.dataValues.userId !== user.id) {
+        const error = new Error('Unauthorized user');
+        error.status = 401;
+        throw error;
+    }
+
+    const postRemoved = await BlogPost.destroy({ where: { id } });
+    console.log('função para remover', postRemoved);
+    return postRemoved;
 };
 
 module.exports = { 
     postAll,
-    postId,
-
+    getPostId,
+    removePost,
+    createPost,
 };
